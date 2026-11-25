@@ -47,9 +47,26 @@
     </nav>
 
     <div class="header-actions">
-      <button class="icon-btn" type="button" title="搜索博客文章 (/)" aria-label="搜索博客文章" id="headerSearchBtn" data-search-url="{{ "posts/#filter" | relURL }}">⌕</button>
-      <button class="icon-btn" type="button" title="切换暗色 / 亮色" aria-label="切换暗色或亮色主题" id="headerThemeBtn">◐</button>
-      <button class="icon-btn nav-toggle" type="button" title="导航菜单" aria-label="打开导航菜单" aria-expanded="false" aria-controls="primaryNav" id="headerNavBtn">☰</button>
+      <button class="icon-btn" type="button" title="搜索博客文章 (/)" aria-label="搜索博客文章" id="headerSearchBtn" data-search-url="{{ "posts/#filter" | relURL }}">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+      </button>
+      <button class="icon-btn" type="button" title="切换暗色 / 亮色" aria-label="切换暗色或亮色主题" id="headerThemeBtn">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      </button>
+      <button class="icon-btn nav-toggle" type="button" title="导航菜单" aria-label="打开导航菜单" aria-expanded="false" aria-controls="primaryNav" id="headerNavBtn">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
     </div>
   </div>
 </header>
