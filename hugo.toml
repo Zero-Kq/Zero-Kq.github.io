@@ -1,4 +1,4 @@
-baseURL = 'https://Zero-Kq.github.io/Pages/'
+baseURL = 'https://zero-kq.github.io/'
 locale = 'zh-CN'
 title = 'Zero'
 hasCJKLanguage = true
@@ -44,7 +44,7 @@ enableRobotsTXT = true
   description = "这里记录和学习 SLAM系统工程中的数学推导、源码拆解与开源项目记录以及看到的一些有意思的东西。"
   mainSections = ["posts"]
   github = "https://github.com/Zero-Kq"
-  repo = "https://github.com/Zero-Kq/Pages"
+  repo = "https://github.com/Zero-Kq/Zero-Kq.github.io"
 
 [[menu.main]]
   identifier = "home"

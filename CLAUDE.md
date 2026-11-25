@@ -4,7 +4,7 @@
 
 ## 项目概述
 
-这是一个基于 **Hugo**（去主题化，采用自研 **Warm Amber / 暖金测绘** 原生模板与样式系统）构建的静态技术博客，通过 GitHub Actions 在推送到 `main` 分支时自动部署到 **GitHub Pages**（子路径 `/Pages/`）。
+这是一个基于 **Hugo**（去主题化，采用自研 **Warm Amber / 暖金测绘** 原生模板与样式系统）构建的静态技术博客，通过 GitHub Actions 在推送到 `main` 分支时自动部署到 **GitHub Pages**（根域名 `https://zero-kq.github.io/`）。
 
 ## 语言偏好
 
@@ -21,8 +21,8 @@ npm run dev
 # 生产构建（Hugo + Shiki dark-plus 后处理，输出到 public/）
 npm run build
 
-# 模拟 GitHub Pages 子路径构建
-npm run build -- --baseURL "https://Zero-Kq.github.io/Pages/"
+# 指定根域名构建验证
+npm run build -- --baseURL "https://zero-kq.github.io/"
 ```
 
 ### GitHub Actions 部署
@@ -49,7 +49,7 @@ npm run build -- --baseURL "https://Zero-Kq.github.io/Pages/"
   - `_default/single.html` - 文章详情页（阅读进度条、面包屑、吸顶 TOC、上下篇导航）
   - `_default/list.html` - 通用列表/分类回退模板
   - `_default/_markup/render-codeblock.html` - Mermaid 包裹与高亮输出钩子
-  - `_default/_markup/render-image.html` - 站内图片 `/Pages/` 子路径适配
+  - `_default/_markup/render-image.html` - 站内图片 `relURL` 路径适配
   - `index.html` - 暖金首页（Plan P Logo、LiDAR SVG、LIVE INDEX 动态统计、最近文章、方向索引）
   - `posts/list.html` - 博客列表页（即时搜索框 + 动态分类筛选 Chip）
   - `projects/list.html` - 学习系列 / 项目展示页
@@ -62,10 +62,10 @@ npm run build -- --baseURL "https://Zero-Kq.github.io/Pages/"
 - `static/images/mark.svg` - Plan P 双端入雾孤线 SVG Favicon
 - `scripts/` - `build.mjs`、`preview.mjs`、`shiki-highlight.mjs`（Shiki `dark-plus` 构建后处理）
 
-### 子路径与渲染管线注意点
+### 路径与渲染管线注意点
 
-1. **GitHub Pages `/Pages/` 子路径适配**：
-   - 所有站内链接与资源路径均通过 `relURL`、`.RelPermalink` 或菜单 `.URL` 生成；不要对已经解析过 `baseURL` 的菜单 `.URL` 再次调用 `relURL`（避免 `/Pages/Pages/` 双前缀）。
+1. **GitHub Pages 根路径与 `baseURL` 适配**：
+   - 站点部署在根域名 `https://zero-kq.github.io/`，但所有站内链接与资源路径仍通过 `relURL`、`.RelPermalink` 或菜单 `.URL` 生成；不要对已经解析过 `baseURL` 的菜单 `.URL` 再次调用 `relURL`（避免在带子路径 `baseURL` 下重复前缀）。
    - Markdown 图片若以 `/` 开头（如 `/posts/slam/...`），由 `layouts/_default/_markup/render-image.html` 转为 `relURL`。
 2. **Shiki 代码高亮**：
    - `render-codeblock.html` 将非 `mermaid` 代码块交给 `transform.Highlight`，保留 `.highlight code[data-lang]` 结构；

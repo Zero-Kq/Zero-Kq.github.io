@@ -1,10 +1,10 @@
 # Zero 的个人博客
 
-基于 [Hugo](https://gohugo.io/) 与 [PaperMod](https://github.com/adityatelange/hugo-PaperMod) 主题搭建的静态站点，用于记录技术学习笔记与成长历程。
+基于 [Hugo](https://gohugo.io/) 与自研暖金（Warm Amber）模板搭建的静态站点，用于记录技术学习笔记与成长历程。
 
 ## 在线访问
 
-**主页：** [https://Zero-Kq.github.io/Pages/](https://Zero-Kq.github.io/Pages/)
+**主页：** [https://zero-kq.github.io/](https://zero-kq.github.io/)
 
 ## 内容概览
 
