@@ -1,3 +1,4 @@
+# Zero / Spatial Notes — Hugo 站点配置 (https://zero-kq.github.io/)
 baseURL = 'https://zero-kq.github.io/'
 locale = 'zh-CN'
 title = 'Zero'
