@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="{{ site.Language.Locale | default "zh-CN" }}" data-theme="dark">
+<head>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem('zero-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.dataset.theme = saved;
+        }
+      } catch (_) {}
+    })();
+  </script>
+  {{- partial "head.html" . -}}
+</head>
+<body>
+  {{- if and .IsPage (eq .Section "posts") }}
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+  {{- end }}
+
+  {{- partial "header.html" . -}}
+
+  <main>
+    {{- block "main" . }}{{- end }}
+  </main>
+
+  {{- partial "footer.html" . -}}
+
+  {{- $siteJS := resources.Get "js/site.js" | minify | fingerprint }}
+  <script defer src="{{ $siteJS.RelPermalink }}" integrity="{{ $siteJS.Data.Integrity }}"></script>
+
+  {{- if hugo.IsServer }}
+  <script type="module">
+    import { createHighlighter } from 'https://cdn.jsdelivr.net/npm/shiki@4.3.0/+esm';
+    const blocks = document.querySelectorAll('.highlight code[data-lang]');
+    if (blocks.length > 0) {
+      createHighlighter({
+        themes: ['dark-plus', 'github-light'],
+        langs: ['cpp', 'bash', 'yaml', 'json', 'python', 'go', 'javascript', 'html', 'css', 'shell', 'plaintext', 'text']
+      }).then(highlighter => {
+        blocks.forEach(el => {
+          let lang = el.getAttribute('data-lang');
+          if (lang === 'sh') lang = 'shell';
+          if (!highlighter.getLoadedLanguages().includes(lang)) lang = 'plaintext';
+          let text = el.textContent;
+          if (text.endsWith('\n')) text = text.slice(0, -1);
+          const html = highlighter.codeToHtml(text, {
+            lang,
+            themes: { dark: 'dark-plus', light: 'github-light' },
+            defaultColor: 'dark'
+          });
+          const temp = document.createElement('div');
+          temp.innerHTML = html;
+          const innerCode = temp.querySelector('code');
+          if (innerCode) el.innerHTML = innerCode.innerHTML;
+        });
+      }).catch(console.error);
+    }
+  </script>
+  {{- end }}
+</body>
+</html>

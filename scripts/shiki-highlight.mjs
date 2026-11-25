@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 async function processHtmlFiles() {
     console.log('Initializing Shiki...');
     const highlighter = await createHighlighter({
-        themes: ['dark-plus'],
+        themes: ['dark-plus', 'github-light'],
         langs: ['cpp', 'bash', 'yaml', 'json', 'python', 'go', 'javascript', 'html', 'css', 'shell', 'plaintext', 'text']
     });
 
@@ -45,7 +45,11 @@ async function processHtmlFiles() {
                 try {
                     const shikiHtml = highlighter.codeToHtml(codeText, {
                         lang: lang,
-                        theme: 'dark-plus'
+                        themes: {
+                            dark: 'dark-plus',
+                            light: 'github-light'
+                        },
+                        defaultColor: 'dark'
                     });
 
                     const shikiDoc = cheerio.load(shikiHtml);

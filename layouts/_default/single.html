@@ -1,77 +1,79 @@
-{{- define "main" }}
+{{- define "main" -}}
+{{- $cats := .Params.categories | default (slice "笔记") -}}
+{{- $primaryCat := index $cats 0 -}}
+{{- $hasToc := in .TableOfContents "<li>" -}}
 
-<div class="three-column-layout">
-    {{ partial "sidebar-left.html" . }}
+<article class="shell article-shell">
+  <nav class="article-breadcrumb" aria-label="面包屑导航">
+    <a href="{{ "" | relURL }}">首页</a>
+    <span>/</span>
+    <a href="{{ "posts/" | relURL }}">博客</a>
+    <span>/</span>
+    <span>{{ .Title }}</span>
+  </nav>
 
-    <article class="post-single">
-      <header class="post-header">
-        {{ partial "breadcrumbs.html" . }}
-        <h1 class="post-title entry-hint-parent">
-          {{ .Title }}
-          {{- if .Draft }}
-          <span class="entry-hint" title="Draft">
-            <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
-              <path
-                d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
-            </svg>
-          </span>
-          {{- end }}
-        </h1>
-        {{- if .Description }}
-        <div class="post-description">
-          {{ .Description }}
-        </div>
-        {{- end }}
-        {{- if not (.Param "hideMeta") }}
-        <div class="post-meta">
-          {{- partial "post_meta.html" . -}}
-          {{- partial "translation_list.html" . -}}
-          {{- partial "edit_post.html" . -}}
-          {{- partial "post_canonical.html" . -}}
-        </div>
-        {{- end }}
-      </header>
-      {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
-      {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
-
-      {{- $hasToc := and (.Param "ShowToc") (findRE "(?i)<li" .TableOfContents) }}
-      {{- if $hasToc }}
-      <details class="mobile-toc">
-        <summary>文章目录</summary>
-        <nav class="toc-nav" aria-label="文章目录">
-          {{ replace .TableOfContents "id=\"TableOfContents\"" "id=\"MobileTableOfContents\"" | safeHTML }}
-        </nav>
-      </details>
+  <header class="article-header">
+    <p class="eyebrow">{{ $primaryCat | upper }} / {{ .Date.Format "2006.01.02" }}</p>
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}
+    <p class="article-deck">{{ . }}</p>
+    {{- end }}
+    <div class="article-meta">
+      <span>发布于 <strong>{{ .Date.Format "2006-01-02" }}</strong></span>
+      <span>预计阅读 <strong>{{ .ReadingTime }} 分钟</strong></span>
+      <span>分类 <a class="tag-badge" href="{{ "posts/" | relURL }}?category={{ $primaryCat | urlquery }}">{{ $primaryCat }}</a></span>
+    </div>
+    {{- with .Params.tags }}
+    <div class="article-tags">
+      {{- range . }}
+      <a class="tag-badge" href="{{ "posts/" | relURL }}?tag={{ . | urlquery }}">#{{ . }}</a>
       {{- end }}
-      {{- if .Content }}
-      <div class="post-content">
-        {{- if not (.Param "disableAnchoredHeadings") }}
-        {{- partial "anchored_headings.html" .Content -}}
-        {{- else }}{{ .Content }}{{ end }}
-      </div>
-      {{- end }}
+    </div>
+    {{- end }}
+  </header>
 
-      <footer class="post-footer">
-        {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
-        <ul class="post-tags">
-          {{- range ($.GetTerms $tags) }}
-          <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
-          {{- end }}
-        </ul>
-        {{- if (.Param "ShowPostNavLinks") }}
-        {{- partial "post_nav_links.html" . }}
+  {{- if $hasToc }}
+  <details class="mobile-toc">
+    <summary>ON THIS PAGE · 目录</summary>
+    {{ .TableOfContents }}
+  </details>
+  {{- end }}
+
+  <div class="article-layout">
+    <div class="article-content">
+      {{ .Content }}
+
+      <p style="margin-top:32px;">
+        <a class="text-link" href="{{ "posts/" | relURL }}">← 返回博客列表</a>
+      </p>
+
+      {{- if or .PrevInSection .NextInSection }}
+      <nav class="article-nav" aria-label="文章导航">
+        {{- with .NextInSection }}
+        <a class="article-nav-card" href="{{ .RelPermalink }}">
+          <span>← 较新一篇</span>
+          <strong>{{ .Title }}</strong>
+        </a>
+        {{- else }}
+        <div></div>
         {{- end }}
-        {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}
-        {{- partial "share_icons.html" . -}}
+
+        {{- with .PrevInSection }}
+        <a class="article-nav-card is-next" href="{{ .RelPermalink }}">
+          <span>较早一篇 →</span>
+          <strong>{{ .Title }}</strong>
+        </a>
         {{- end }}
-      </footer>
-
-      {{- if (.Param "comments") }}
-      {{- partial "comments.html" . }}
+      </nav>
       {{- end }}
-    </article>
+    </div>
 
-    {{ partial "sidebar-right.html" . }}
-</div>
-
-{{- end }}{{/* end main */}}
+    {{- if $hasToc }}
+    <aside class="toc-rail" aria-label="文章目录">
+      <p class="toc-title">ON THIS PAGE</p>
+      {{ .TableOfContents }}
+    </aside>
+    {{- end }}
+  </div>
+</article>
+{{- end -}}

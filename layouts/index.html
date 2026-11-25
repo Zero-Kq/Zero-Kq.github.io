@@ -1,0 +1,126 @@
+{{- define "main" -}}
+{{- $posts := (where site.RegularPages "Section" "posts").ByDate.Reverse -}}
+{{- $slamCount := len (where $posts "Params.categories" "intersect" (slice "SLAM")) -}}
+{{- $rosCount := len (where $posts "Params.categories" "intersect" (slice "ROS")) -}}
+{{- $perceptionCount := len (where $posts "Params.categories" "intersect" (slice "感知")) -}}
+{{- $infraCount := len (where $posts "Params.categories" "intersect" (slice "linux" "Linux" "学习笔记" "其他" "Web" "技术")) -}}
+{{- $projects := where site.RegularPages "Section" "projects" -}}
+
+<section class="home-hero">
+  <svg class="slam-motif" viewBox="0 0 640 520" fill="none" aria-hidden="true">
+    <circle cx="460" cy="180" r="85" stroke="var(--line)" stroke-width="1" stroke-dasharray="3 5" />
+    <circle cx="460" cy="180" r="165" stroke="var(--line)" stroke-width="1" />
+    <circle cx="460" cy="180" r="245" stroke="var(--line)" stroke-width="1" stroke-opacity="0.7" />
+    <path d="M460 180 L250 65 A245 245 0 0 1 560 405 Z" fill="var(--accent)" fill-opacity="0.055" />
+    <line x1="460" y1="180" x2="250" y2="65" stroke="var(--accent)" stroke-opacity="0.35" stroke-width="1" />
+    <line x1="460" y1="180" x2="560" y2="405" stroke="var(--accent)" stroke-opacity="0.35" stroke-width="1" />
+    <line x1="180" y1="180" x2="620" y2="180" stroke="var(--line)" stroke-width="1" />
+    <line x1="460" y1="10" x2="460" y2="460" stroke="var(--line)" stroke-width="1" />
+    <polyline points="235,345 292,295 348,274 398,225 460,180 515,148 565,112" stroke="var(--accent)" stroke-width="1.6" stroke-opacity="0.88" />
+    <path d="M292 295 Q 355 155 460 180" stroke="var(--secondary-accent)" stroke-width="1.2" stroke-dasharray="4 4" stroke-opacity="0.85" />
+    <rect x="288" y="291" width="8" height="8" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5" />
+    <rect x="344" y="270" width="8" height="8" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5" />
+    <rect x="394" y="221" width="8" height="8" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5" />
+    <circle cx="460" cy="180" r="4.5" fill="var(--accent)" />
+    <rect x="511" y="144" width="8" height="8" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5" />
+    <g fill="var(--accent)" fill-opacity="0.65">
+      <circle cx="310" cy="112" r="2" /><circle cx="332" cy="105" r="1.8" /><circle cx="356" cy="96" r="2.2" />
+      <circle cx="378" cy="92" r="1.6" /><circle cx="412" cy="84" r="2" /><circle cx="520" cy="88" r="2" />
+      <circle cx="548" cy="106" r="1.8" /><circle cx="578" cy="138" r="2.2" /><circle cx="592" cy="168" r="1.8" />
+      <circle cx="585" cy="222" r="2" /><circle cx="566" cy="264" r="1.6" /><circle cx="536" cy="306" r="2.2" />
+      <circle cx="496" cy="336" r="1.8" /><circle cx="430" cy="340" r="1.6" /><circle cx="386" cy="318" r="2" />
+    </g>
+    <text x="472" y="170" fill="var(--muted)" font-family="monospace" font-size="10">T_WB · SE(3)</text>
+    <text x="298" y="314" fill="var(--secondary-accent)" font-family="monospace" font-size="10">BTC LOOP</text>
+  </svg>
+
+  <div class="shell hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">ROBOTICS &amp; SPATIAL INTELLIGENCE</p>
+      <h1>预测般实践，<br />到观测般论证。</h1>
+      <p class="hero-lead">
+        {{ site.Params.description }}
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{{ "posts/" | relURL }}">浏览全部博客 <span>→</span></a>
+        <a class="btn btn-secondary" href="{{ "projects/" | relURL }}">查看学习系列与项目</a>
+        <a class="btn btn-secondary" href="{{ "archive/" | relURL }}">按时间轴回看</a>
+      </div>
+    </div>
+
+    <aside class="signal-panel">
+      <div class="panel-header">
+        <span>LIVE INDEX</span>
+        <span>ZERO-KQ / PAGES</span>
+      </div>
+      <div class="metric"><strong>{{ printf "%02d" (len $posts) }}</strong><span>篇技术博客</span></div>
+      <div class="metric"><strong>{{ printf "%02d" $slamCount }}</strong><span>篇 SLAM 核心推导</span></div>
+      <div class="metric"><strong>{{ printf "%02d" (len $projects) }}</strong><span>个开源项目（持续扩充）</span></div>
+      <div class="signal-status"><i></i><span>ACTIVE · ZLIO / IESKF / OPEN SOURCE</span></div>
+    </aside>
+  </div>
+
+  <div class="shell ticker">
+    <span>EXPLORE</span>
+    <span>LIDAR-IMU ODOMETRY</span>
+    <span>IESKF</span>
+    <span>VOXEL MAP</span>
+    <span>BTC LOOP CLOSURE</span>
+    <span>GTSAM</span>
+    <span>INTEL TBB</span>
+    <span>ROS &amp; EDGE AI</span>
+  </div>
+</section>
+
+<section class="shell home-section">
+  <header class="section-heading">
+    <div>
+      <p class="eyebrow">RECENT LOGS</p>
+      <h2>最近更新的博客</h2>
+    </div>
+    <a class="text-link" href="{{ "posts/" | relURL }}">全部 {{ len $posts }} 篇文章 <span>→</span></a>
+  </header>
+  <div class="post-grid">
+    {{- range first 6 $posts }}
+      {{- partial "post-card.html" . }}
+    {{- end }}
+  </div>
+</section>
+
+<section class="home-band">
+  <div class="shell discipline-grid">
+    <div>
+      <p class="eyebrow">WHAT LIVES HERE</p>
+      <h2>主要合集，<br />打造一套学习用的工程知识库。</h2>
+      <p class="discipline-sub">点击任意方向可直接跳转到博客页并按该分类自动筛选文章。</p>
+    </div>
+    <div class="discipline-list">
+      <a class="discipline-row" href="{{ "posts/" | relURL }}?category=SLAM"><b>01</b><span>SLAM 状态估计、点云配准与回环检测</span><small>{{ printf "%02d" $slamCount }} 篇</small><i>→</i></a>
+      <a class="discipline-row" href="{{ "posts/" | relURL }}?category=ROS"><b>02</b><span>ROS 通信、PX4 无人机仿真与环境搭建</span><small>{{ printf "%02d" $rosCount }} 篇</small><i>→</i></a>
+      <a class="discipline-row" href="{{ "posts/" | relURL }}?category={{ "感知" | urlquery }}"><b>03</b><span>端侧视觉感知与 K230 YOLOv8 部署</span><small>{{ printf "%02d" $perceptionCount }} 篇</small><i>→</i></a>
+      <a class="discipline-row" href="{{ "posts/" | relURL }}?category={{ "linux,学习笔记,其他,Web,技术" | urlquery }}"><b>04</b><span>Linux 系统配置、Git 与工程基建</span><small>{{ printf "%02d" $infraCount }} 篇</small><i>→</i></a>
+    </div>
+  </div>
+</section>
+
+<section class="shell home-section">
+  <header class="section-heading">
+    <div>
+      <p class="eyebrow">NEXT FRONTIER</p>
+      <h2>项目与时间脉络</h2>
+    </div>
+  </header>
+  <div class="launch-grid">
+    <a class="launch-card" href="{{ "projects/" | relURL }}">
+      <span>LEARNING SERIES &amp; PROJECTS / 01</span>
+      <h3>集中展示个人开源项目介绍、技术栈与仓库直达链接（已收录 dsh-web-update）。</h3>
+      <b>进入学习系列 →</b>
+    </a>
+    <a class="launch-card" href="{{ "archive/" | relURL }}">
+      <span>TIMELINE ARCHIVE / 02</span>
+      <h3>按年份回看每一篇技术推导与实践记录，清晰追踪知识演进路径。</h3>
+      <b>进入时间轴 →</b>
+    </a>
+  </div>
+</section>
+{{- end -}}

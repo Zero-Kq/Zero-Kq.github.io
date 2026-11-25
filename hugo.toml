@@ -1,16 +1,16 @@
-# 核心站点配置（适配你的 GitHub Pages 仓库）
-baseURL = 'https://Zero-Kq.github.io/Pages/'  # 关键：改成你的仓库访问地址
-languageCode = 'zh-CN'                       # 关键：改成中文（适配中文显示）
-title = 'Zero'                 # 自定义：博客标题，可改
+baseURL = 'https://Zero-Kq.github.io/Pages/'
+locale = 'zh-CN'
+title = 'Zero'
+hasCJKLanguage = true
+enableRobotsTXT = true
 
-# 必须配置：指定使用 PaperMod 主题（解决 layout 模板缺失问题）
-theme = 'PaperMod'
-
-# 启用 JSON 输出（搜索功能必需）
 [outputs]
-  home = ["HTML", "JSON"]
+  home = ["HTML", "RSS"]
 
-# Goldmark 配置 - 启用数学公式 passthrough
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
 [markup]
   [markup.highlight]
     codeFences = true
@@ -19,6 +19,10 @@ theme = 'PaperMod'
     lineNumbersInTable = true
     noClasses = false
     style = "gruvbox"
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+    ordered = false
   [markup.goldmark]
     [markup.goldmark.extensions]
       [markup.goldmark.extensions.passthrough]
@@ -33,72 +37,41 @@ theme = 'PaperMod'
             ["\\(", "\\)"]
           ]
 
-# PaperMod 主题基础配置（可选，优化体验）
 [params]
-    author = 'Zero-Kq'                       # 自定义：你的名字/昵称
-    defaultTheme = 'auto'                   # 自动切换亮色/暗色模式
-    ShowReadingTime = true                  # 显示文章阅读时长
-    ShowPostNavLinks = true                 # 显示文章上下篇导航
-    ShowToc = true                          # 显示文章目录
-    TocOpen = false                         # 目录默认不展开
-    disableSpecial1stPost = true
-
-    # 博主信息配置（用于左侧边栏）
-    [params.profileMode]
-        title = "Zero"
-        imageUrl = "images/avatar.jpg"
-        imageTitle = "我的头像"
-        description = "技术学习笔记，记录成长历程"
-
-    # 主要内容区域
-    mainSections = ["posts"]
-
-# 首页"欢迎"区域配置
-[params.homeInfoParams]
-    Title = "欢迎 👋"
-    Content = "这里是我的个人学习笔记，记录技术学习和成长历程。\n\n如果你觉得内容有帮助，欢迎关注我的社交媒体！"
-
-# 首页社交图标（显示在"欢迎"下方）
-[[params.socialIcons]]
-    name = "github"
-    url = "https://github.com/Zero-Kq"
-
-[[params.socialIcons]]
-    name = "twitter"
-    url = "https://x.com/你的X用户名"
-
-[[params.socialIcons]]
-    name = "kofi"
-    url = "https://www.buymeacoffee.com/你的ID"
-
-# 导航菜单
-[[menu.main]]
-    identifier = "home"
-    name = "首页"
-    url = "/"
-    weight = 1
+  author = "Zero-Kq"
+  brand = "ZERO"
+  subtitle = "SPATIAL NOTES"
+  description = "这里记录和学习 SLAM系统工程中的数学推导、源码拆解与开源项目记录以及看到的一些有意思的东西。"
+  mainSections = ["posts"]
+  github = "https://github.com/Zero-Kq"
+  repo = "https://github.com/Zero-Kq/Pages"
 
 [[menu.main]]
-    identifier = "categories"
-    name = "分类"
-    url = "/categories/"
-    weight = 2
+  identifier = "home"
+  name = "首页"
+  url = "/"
+  weight = 1
 
 [[menu.main]]
-    identifier = "posts"
-    name = "文章"
-    url = "/posts/"
-    weight = 3
+  identifier = "posts"
+  name = "博客"
+  url = "/posts/"
+  weight = 2
 
 [[menu.main]]
-    identifier = "search"
-    name = "搜索"
-    url = "/search/"
-    weight = 4
+  identifier = "projects"
+  name = "学习系列"
+  url = "/projects/"
+  weight = 3
 
 [[menu.main]]
-    identifier = "about"
-    name = "关于"
-    url = "/about/"
-    weight = 5
+  identifier = "archive"
+  name = "时间轴"
+  url = "/archive/"
+  weight = 4
 
+[[menu.main]]
+  identifier = "about"
+  name = "关于"
+  url = "/about/"
+  weight = 5

@@ -1,0 +1,21 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="brand_e1" x1="16" y1="9" x2="36.5" y2="13.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#e5a93c" stop-opacity="0" />
+      <stop offset="100%" stop-color="#e5a93c" stop-opacity="0.62" />
+    </linearGradient>
+    <linearGradient id="brand_e2" x1="36.5" y1="13.5" x2="25.5" y2="19.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#e5a93c" stop-opacity="0.62" />
+      <stop offset="100%" stop-color="#e5a93c" stop-opacity="1" />
+    </linearGradient>
+    <linearGradient id="brand_e5" x1="14" y1="39" x2="40" y2="29.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#e5a93c" stop-opacity="0.96" />
+      <stop offset="55%" stop-color="#e5a93c" stop-opacity="0.52" />
+      <stop offset="100%" stop-color="#e5a93c" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <path d="M16 9 H34 Q41 9 36.5 13.5" stroke="url(#brand_e1)" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M36.5 13.5 L33 17 Q30.5 19.5 25.5 19.5" stroke="url(#brand_e2)" stroke-width="2.6" stroke-linecap="round" />
+  <path d="M25.5 19.5 H14 Q8 19.5 8 25.5 V33 Q8 39 14 39" stroke="#e5a93c" stroke-width="2.8" stroke-linecap="round" />
+  <path d="M14 39 H25.5 Q30.5 39 34 35.5 L40 29.5" stroke="url(#brand_e5)" stroke-width="2.6" stroke-linecap="round" />
+</svg>

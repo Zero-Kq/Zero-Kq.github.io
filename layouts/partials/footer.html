@@ -1,0 +1,29 @@
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <section>
+      <p class="eyebrow">SPATIAL NOTES / 2024—NOW</p>
+      <h2>把学习经历，写成未来的观测地图。</h2>
+      <p>Built with Hugo &amp; Shiki. Warm Amber editorial theme designed for SLAM, robotics, and open-source work.</p>
+    </section>
+    <section>
+      <p class="footer-label">EXPLORE</p>
+      <ul>
+        {{- range site.Menus.main }}
+        <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+        {{- end }}
+      </ul>
+    </section>
+    <section>
+      <p class="footer-label">CONNECT</p>
+      <ul>
+        <li><a href="{{ site.Params.github | default "https://github.com/Zero-Kq" }}" target="_blank" rel="noopener">GitHub ↗</a></li>
+        <li><a href="{{ site.Params.repo | default "https://github.com/Zero-Kq/Pages" }}" target="_blank" rel="noopener">Repository ↗</a></li>
+        <li><a href="https://github.com/Zero-Kq/dsh-web-update" target="_blank" rel="noopener">dsh-web-update ↗</a></li>
+      </ul>
+    </section>
+  </div>
+  <div class="shell footer-bottom">
+    <span>© {{ now.Year }} {{ site.Params.author | default "Zero-Kq" }} · Spatial Notes</span>
+    <span>WARM AMBER EDITION · HUGO + SHIKI</span>
+  </div>
+</footer>

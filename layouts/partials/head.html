@@ -1,0 +1,82 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>
+  {{- if .IsHome -}}
+    {{ site.Title }} / {{ site.Params.subtitle | default "Spatial Notes" }}
+  {{- else -}}
+    {{ .Title }} · {{ site.Title }}
+  {{- end -}}
+</title>
+<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ if .IsPage }}{{ .Summary | plainify | truncate 140 }}{{ else }}{{ site.Params.description }}{{ end }}{{ end }}" />
+<link rel="icon" type="image/svg+xml" href="{{ "images/mark.svg" | relURL }}" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@600;700;900&display=swap" />
+
+{{- $siteCSS := resources.Get "css/site.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $siteCSS.RelPermalink }}" integrity="{{ $siteCSS.Data.Integrity }}" />
+
+{{- if and .IsPage (.Param "math") }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false},
+      {left: '\\[', right: '\\]', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ]
+  });"></script>
+{{- end }}
+
+{{- if and .IsPage (in .Content "class=\"mermaid\"") }}
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof mermaid === 'undefined') return;
+    const nodes = Array.from(document.querySelectorAll('.mermaid'));
+    nodes.forEach(node => {
+      node.dataset.mermaidSrc = node.textContent;
+    });
+
+    function renderMermaid(themeMode) {
+      const isLight = themeMode === 'light';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: isLight ? 'neutral' : 'dark',
+        securityLevel: 'loose',
+        fontFamily: 'inherit',
+        themeVariables: isLight
+          ? {
+              primaryColor: '#ebe6db',
+              primaryTextColor: '#181715',
+              primaryBorderColor: '#9e6810',
+              lineColor: '#9e6810',
+              secondaryColor: '#f5f2eb',
+              tertiaryColor: '#fcfaf5'
+            }
+          : {
+              primaryColor: '#24221e',
+              primaryTextColor: '#f0ede6',
+              primaryBorderColor: '#e5a93c',
+              lineColor: '#e5a93c',
+              secondaryColor: '#1a1916',
+              tertiaryColor: '#121110'
+            }
+      });
+      nodes.forEach(node => {
+        node.removeAttribute('data-processed');
+        node.textContent = node.dataset.mermaidSrc || '';
+      });
+      mermaid.run({ nodes });
+    }
+
+    renderMermaid(document.documentElement.dataset.theme || 'dark');
+    window.addEventListener('zero:themechange', (e) => {
+      renderMermaid(e.detail?.theme || 'dark');
+    });
+  });
+</script>
+{{- end }}

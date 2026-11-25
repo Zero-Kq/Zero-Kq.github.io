@@ -1,0 +1,55 @@
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="brand" href="{{ "" | relURL }}" aria-label="返回首页">
+      <svg class="brand-mark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="nav_e1" x1="16" y1="9" x2="36.5" y2="13.5" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="currentColor" stop-opacity="0" />
+            <stop offset="100%" stop-color="currentColor" stop-opacity="0.62" />
+          </linearGradient>
+          <linearGradient id="nav_e2" x1="36.5" y1="13.5" x2="25.5" y2="19.5" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="currentColor" stop-opacity="0.62" />
+            <stop offset="100%" stop-color="currentColor" stop-opacity="1" />
+          </linearGradient>
+          <linearGradient id="nav_e5" x1="14" y1="39" x2="40" y2="29.5" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="currentColor" stop-opacity="0.96" />
+            <stop offset="55%" stop-color="currentColor" stop-opacity="0.52" />
+            <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <path d="M16 9 H34 Q41 9 36.5 13.5" stroke="url(#nav_e1)" stroke-width="2.5" stroke-linecap="round" />
+        <path d="M36.5 13.5 L33 17 Q30.5 19.5 25.5 19.5" stroke="url(#nav_e2)" stroke-width="2.6" stroke-linecap="round" />
+        <path d="M25.5 19.5 H14 Q8 19.5 8 25.5 V33 Q8 39 14 39" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" />
+        <path d="M14 39 H25.5 Q30.5 39 34 35.5 L40 29.5" stroke="url(#nav_e5)" stroke-width="2.6" stroke-linecap="round" />
+      </svg>
+      <span class="brand-text">
+        <strong>{{ site.Params.brand | default "ZERO" }}</strong>
+        <small>{{ site.Params.subtitle | default "SPATIAL NOTES" }}</small>
+      </span>
+    </a>
+
+    <nav class="primary-nav" id="primaryNav" aria-label="主导航">
+      {{- range site.Menus.main }}
+      {{- $active := false }}
+      {{- if and (eq .Identifier "home") $.IsHome }}
+        {{- $active = true }}
+      {{- else if and (eq .Identifier "posts") (or (eq $.Section "posts") (eq $.Kind "taxonomy") (eq $.Kind "term")) }}
+        {{- $active = true }}
+      {{- else if and (eq .Identifier "projects") (eq $.Section "projects") }}
+        {{- $active = true }}
+      {{- else if and (eq .Identifier "archive") (eq $.Section "archive") }}
+        {{- $active = true }}
+      {{- else if and (eq .Identifier "about") (eq $.Section "about") }}
+        {{- $active = true }}
+      {{- end }}
+      <a href="{{ .URL }}"{{ if $active }} class="is-active"{{ end }}>{{ .Name }}</a>
+      {{- end }}
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" type="button" title="搜索博客文章 (/)" aria-label="搜索博客文章" id="headerSearchBtn" data-search-url="{{ "posts/#filter" | relURL }}">⌕</button>
+      <button class="icon-btn" type="button" title="切换暗色 / 亮色" aria-label="切换暗色或亮色主题" id="headerThemeBtn">◐</button>
+      <button class="icon-btn nav-toggle" type="button" title="导航菜单" aria-label="打开导航菜单" aria-expanded="false" aria-controls="primaryNav" id="headerNavBtn">☰</button>
+    </div>
+  </div>
+</header>

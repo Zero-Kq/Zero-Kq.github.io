@@ -1,0 +1,21 @@
+{{- $cats := .Params.categories | default (slice "笔记") -}}
+{{- $tags := .Params.tags | default (slice) -}}
+{{- $primaryCat := index $cats 0 -}}
+{{- $desc := .Description | default (.Summary | plainify | truncate 110) -}}
+{{- $searchText := printf "%s %s %s %s" .Title $desc (delimit $cats " ") (delimit $tags " ") | lower -}}
+<article class="post-card"
+  data-post-card
+  data-categories="{{ delimit $cats "|" }}"
+  data-tags="{{ delimit $tags "|" }}"
+  data-search="{{ $searchText }}">
+  <div class="post-card-top">
+    <span class="index-mark">{{ .Date.Format "02" }}</span>
+    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006.01" }}</time>
+  </div>
+  <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+  <p>{{ $desc }}</p>
+  <footer>
+    <a class="tag-badge" href="{{ "posts/" | relURL }}?category={{ $primaryCat | urlquery }}">{{ $primaryCat }}</a>
+    <a class="text-link" href="{{ .RelPermalink }}">阅读 <span>→</span></a>
+  </footer>
+</article>
