@@ -155,7 +155,7 @@ img { max-width: 100%; height: auto; }
 .brand-mark { width: 36px; height: 36px; color: var(--accent); flex-shrink: 0; }
 .brand-text { display: grid; line-height: 1; }
 .brand-text strong { font: 700 0.84rem/1 var(--mono); letter-spacing: 0.14em; }
-.brand-text small { margin-top: 5px; font: 500 0.58rem/1 var(--mono); letter-spacing: 0.16em; color: var(--muted); }
+.brand-text small { margin-top: 5px; font: 500 0.58rem/1 var(--mono); letter-spacing: 0.16em; color: var(--muted); white-space: nowrap; }
 
 .primary-nav {
   display: flex;
@@ -1249,32 +1249,20 @@ html[data-theme="light"] .article-content .highlight code span[style*="--shiki-l
 }
 
 /* =====================================================================
-   THEME SWITCH — INK BLEED / LIQUID RIPPLE (View Transitions API)
+   THEME SWITCH — EMBER BURN (WebGL2 + GLSL Shader)
    ===================================================================== */
-html.theme-transitioning::view-transition-group(root) {
-  animation-duration: 0s;
+.ink-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 99999;
+  display: none;
 }
 
-html.theme-transitioning::view-transition-old(root),
-html.theme-transitioning::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-html.theme-transitioning::view-transition-old(root) {
-  z-index: 1;
-}
-
-html.theme-transitioning::view-transition-new(root) {
-  z-index: 9999;
-  -webkit-mask-image: var(--vt-ink-mask);
-  mask-image: var(--vt-ink-mask);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-size: 0px 0px;
-  mask-size: 0px 0px;
-  -webkit-mask-position: var(--vt-origin-x, 50%) var(--vt-origin-y, 50%);
-  mask-position: var(--vt-origin-x, 50%) var(--vt-origin-y, 50%);
+#headerThemeBtn[data-ink-live] {
+  position: relative;
 }
 
 #headerThemeBtn.is-rippling svg {
@@ -1288,8 +1276,6 @@ html.theme-transitioning::view-transition-new(root) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.theme-transitioning::view-transition-old(root),
-  html.theme-transitioning::view-transition-new(root),
   #headerThemeBtn.is-rippling svg {
     animation: none !important;
   }
