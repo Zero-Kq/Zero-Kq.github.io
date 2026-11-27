@@ -1287,41 +1287,10 @@ html.theme-transitioning::view-transition-new(root) {
   100% { transform: scale(1) rotate(0deg); }
 }
 
-.theme-ink-ripple {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 10000;
-  transform: translate(-50%, -50%) scale(0.35);
-  border: 1.5px solid var(--accent);
-  box-shadow: 0 0 18px 2px var(--accent-soft);
-  opacity: 0.72;
-  animation: themeInkRipple 0.78s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes themeInkRipple {
-  0% {
-    transform: translate(-50%, -50%) scale(0.35);
-    opacity: 0.75;
-  }
-  45% {
-    opacity: 0.4;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(var(--ripple-scale, 48));
-    opacity: 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html.theme-transitioning::view-transition-old(root),
   html.theme-transitioning::view-transition-new(root),
-  #headerThemeBtn.is-rippling svg,
-  .theme-ink-ripple {
+  #headerThemeBtn.is-rippling svg {
     animation: none !important;
   }
 }

@@ -2,7 +2,7 @@
   const html = document.documentElement;
   const THEME_KEY = 'zero-theme';
 
-  // 1. Theme Toggle (Ink Bleed / Liquid Ripple via View Transitions API)
+  // 1. Theme Toggle (Irregular Ink Bleed via View Transitions API)
   const themeBtn = document.getElementById('headerThemeBtn');
   if (themeBtn) {
     let isTransitioning = false;
@@ -16,30 +16,80 @@
       window.dispatchEvent(new CustomEvent('zero:themechange', { detail: { theme: next } }));
     };
 
+    // Build an organic, multi-lobed ink-blot SVG mask with paper-fiber turbulence
     const buildInkMaskDataUri = (seed) => {
+      const size = 512;
+      const cx = size / 2;
+      const cy = size / 2;
+      const baseR = 138;
+      const pts = 72;
+
+      // Deterministic pseudo-random phases from seed
+      const rand = (n) => {
+        const s = Math.sin(seed * 127.1 + n * 311.7) * 43758.5453;
+        return s - Math.floor(s);
+      };
+      const p1 = rand(1) * Math.PI * 2;
+      const p2 = rand(2) * Math.PI * 2;
+      const p3 = rand(3) * Math.PI * 2;
+      const p4 = rand(4) * Math.PI * 2;
+      const p5 = rand(5) * Math.PI * 2;
+
+      const coords = [];
+      for (let i = 0; i < pts; i++) {
+        const a = (i / pts) * Math.PI * 2;
+        const lobe =
+          1 +
+          0.22 * Math.sin(3 * a + p1) +
+          0.16 * Math.sin(5 * a + p2) +
+          0.11 * Math.sin(7 * a + p3) +
+          0.08 * Math.sin(11 * a + p4) +
+          0.05 * Math.sin(17 * a + p5);
+        const r = baseR * lobe;
+        coords.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
+      }
+
+      // Smooth closed quadratic curve path
+      let d = '';
+      for (let i = 0; i < pts; i++) {
+        const curr = coords[i];
+        const nextPt = coords[(i + 1) % pts];
+        const mx = (curr[0] + nextPt[0]) / 2;
+        const my = (curr[1] + nextPt[1]) / 2;
+        if (i === 0) {
+          const prev = coords[pts - 1];
+          const sx = (prev[0] + curr[0]) / 2;
+          const sy = (prev[1] + curr[1]) / 2;
+          d += `M${sx.toFixed(1)},${sy.toFixed(1)}`;
+        }
+        d += `Q${curr[0].toFixed(1)},${curr[1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
+      }
+      d += 'Z';
+
+      // Subtle satellite ink droplets near the organic boundary
+      let droplets = '';
+      for (let i = 0; i < 9; i++) {
+        const a = rand(10 + i) * Math.PI * 2;
+        const dist = baseR * (1.16 + rand(30 + i) * 0.28);
+        const dr = 5 + rand(50 + i) * 11;
+        const dx = cx + Math.cos(a) * dist;
+        const dy = cy + Math.sin(a) * dist;
+        droplets += `<circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="${dr.toFixed(1)}" fill="#fff"/>`;
+      }
+
       const svg =
-        `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">` +
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">` +
         `<defs><filter id="ink" x="-30%" y="-30%" width="160%" height="160%">` +
-        `<feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="3" seed="${seed}" result="n"/>` +
-        `<feDisplacementMap in="SourceGraphic" in2="n" scale="38" xChannelSelector="R" yChannelSelector="G" result="d"/>` +
-        `<feGaussianBlur in="d" stdDeviation="2.2" result="b"/>` +
-        `<feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"/>` +
+        `<feTurbulence type="turbulence" baseFrequency="0.016" numOctaves="4" seed="${seed}" result="coarse"/>` +
+        `<feDisplacementMap in="SourceGraphic" in2="coarse" scale="52" xChannelSelector="R" yChannelSelector="G" result="d1"/>` +
+        `<feTurbulence type="fractalNoise" baseFrequency="0.055" numOctaves="3" seed="${seed + 19}" result="fine"/>` +
+        `<feDisplacementMap in="d1" in2="fine" scale="18" xChannelSelector="R" yChannelSelector="G" result="d2"/>` +
+        `<feGaussianBlur in="d2" stdDeviation="1.4" result="b"/>` +
+        `<feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"/>` +
         `</filter></defs>` +
-        `<circle cx="160" cy="160" r="108" fill="#fff" filter="url(#ink)"/>` +
+        `<g filter="url(#ink)"><path d="${d}" fill="#fff"/>${droplets}</g>` +
         `</svg>`;
       return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-    };
-
-    const spawnRippleRing = (x, y, maxRadius) => {
-      const ring = document.createElement('span');
-      ring.className = 'theme-ink-ripple';
-      ring.setAttribute('aria-hidden', 'true');
-      ring.style.left = `${x}px`;
-      ring.style.top = `${y}px`;
-      ring.style.setProperty('--ripple-scale', String(Math.max(12, Math.round((maxRadius * 2) / 24))));
-      document.body.appendChild(ring);
-      ring.addEventListener('animationend', () => ring.remove(), { once: true });
-      window.setTimeout(() => ring.remove(), 1100);
     };
 
     themeBtn.addEventListener('click', (event) => {
@@ -64,8 +114,8 @@
       const vw = window.innerWidth;
       const vh = window.innerHeight;
       const maxRadius = Math.hypot(Math.max(x, vw - x), Math.max(y, vh - y));
-      // Circle radius is 108/320 (~0.3375 of box); with displacement, inner solid radius is ~0.25 of box
-      const endSize = Math.ceil(maxRadius / 0.24);
+      // Minimum guaranteed inner opaque radius of the irregular ink blot is ~0.135 of mask width
+      const endSize = Math.ceil(maxRadius / 0.135);
 
       seedCounter = (seedCounter % 97) + 1;
       html.style.setProperty('--vt-ink-mask', buildInkMaskDataUri(seedCounter));
@@ -87,7 +137,6 @@
       }
 
       transition.ready.then(() => {
-        spawnRippleRing(x, y, maxRadius);
         const anim = document.documentElement.animate(
           [
             {
@@ -104,8 +153,8 @@
             }
           ],
           {
-            duration: 780,
-            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            duration: 1400,
+            easing: 'cubic-bezier(0.32, 0.05, 0.18, 1)',
             pseudoElement: '::view-transition-new(root)',
             fill: 'forwards'
           }
