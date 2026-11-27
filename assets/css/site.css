@@ -1247,3 +1247,81 @@ html[data-theme="light"] .article-content .highlight code span[style*="--shiki-l
   .home-section, .home-band { padding: 54px 0; }
   .section-hero { padding: 46px 0 28px; }
 }
+
+/* =====================================================================
+   THEME SWITCH — INK BLEED / LIQUID RIPPLE (View Transitions API)
+   ===================================================================== */
+html.theme-transitioning::view-transition-group(root) {
+  animation-duration: 0s;
+}
+
+html.theme-transitioning::view-transition-old(root),
+html.theme-transitioning::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html.theme-transitioning::view-transition-old(root) {
+  z-index: 1;
+}
+
+html.theme-transitioning::view-transition-new(root) {
+  z-index: 9999;
+  -webkit-mask-image: var(--vt-ink-mask);
+  mask-image: var(--vt-ink-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 0px 0px;
+  mask-size: 0px 0px;
+  -webkit-mask-position: var(--vt-origin-x, 50%) var(--vt-origin-y, 50%);
+  mask-position: var(--vt-origin-x, 50%) var(--vt-origin-y, 50%);
+}
+
+#headerThemeBtn.is-rippling svg {
+  animation: themeBtnPop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes themeBtnPop {
+  0% { transform: scale(1) rotate(0deg); }
+  35% { transform: scale(0.8) rotate(-24deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.theme-ink-ripple {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%) scale(0.35);
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 18px 2px var(--accent-soft);
+  opacity: 0.72;
+  animation: themeInkRipple 0.78s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes themeInkRipple {
+  0% {
+    transform: translate(-50%, -50%) scale(0.35);
+    opacity: 0.75;
+  }
+  45% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(var(--ripple-scale, 48));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transitioning::view-transition-old(root),
+  html.theme-transitioning::view-transition-new(root),
+  #headerThemeBtn.is-rippling svg,
+  .theme-ink-ripple {
+    animation: none !important;
+  }
+}

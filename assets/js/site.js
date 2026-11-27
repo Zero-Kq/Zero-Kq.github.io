@@ -2,16 +2,124 @@
   const html = document.documentElement;
   const THEME_KEY = 'zero-theme';
 
-  // 1. Theme Toggle
+  // 1. Theme Toggle (Ink Bleed / Liquid Ripple via View Transitions API)
   const themeBtn = document.getElementById('headerThemeBtn');
   if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
-      const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+    let isTransitioning = false;
+    let seedCounter = Math.floor(Math.random() * 80) + 1;
+
+    const applyTheme = (next) => {
       html.dataset.theme = next;
       try {
         localStorage.setItem(THEME_KEY, next);
       } catch (_) {}
       window.dispatchEvent(new CustomEvent('zero:themechange', { detail: { theme: next } }));
+    };
+
+    const buildInkMaskDataUri = (seed) => {
+      const svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">` +
+        `<defs><filter id="ink" x="-30%" y="-30%" width="160%" height="160%">` +
+        `<feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="3" seed="${seed}" result="n"/>` +
+        `<feDisplacementMap in="SourceGraphic" in2="n" scale="38" xChannelSelector="R" yChannelSelector="G" result="d"/>` +
+        `<feGaussianBlur in="d" stdDeviation="2.2" result="b"/>` +
+        `<feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"/>` +
+        `</filter></defs>` +
+        `<circle cx="160" cy="160" r="108" fill="#fff" filter="url(#ink)"/>` +
+        `</svg>`;
+      return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+    };
+
+    const spawnRippleRing = (x, y, maxRadius) => {
+      const ring = document.createElement('span');
+      ring.className = 'theme-ink-ripple';
+      ring.setAttribute('aria-hidden', 'true');
+      ring.style.left = `${x}px`;
+      ring.style.top = `${y}px`;
+      ring.style.setProperty('--ripple-scale', String(Math.max(12, Math.round((maxRadius * 2) / 24))));
+      document.body.appendChild(ring);
+      ring.addEventListener('animationend', () => ring.remove(), { once: true });
+      window.setTimeout(() => ring.remove(), 1100);
+    };
+
+    themeBtn.addEventListener('click', (event) => {
+      if (isTransitioning) return;
+
+      const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      themeBtn.classList.remove('is-rippling');
+      void themeBtn.offsetWidth;
+      themeBtn.classList.add('is-rippling');
+      window.setTimeout(() => themeBtn.classList.remove('is-rippling'), 600);
+
+      if (!document.startViewTransition || reduceMotion) {
+        applyTheme(next);
+        return;
+      }
+
+      const rect = themeBtn.getBoundingClientRect();
+      const x = event && event.clientX > 0 ? event.clientX : rect.left + rect.width / 2;
+      const y = event && event.clientY > 0 ? event.clientY : rect.top + rect.height / 2;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const maxRadius = Math.hypot(Math.max(x, vw - x), Math.max(y, vh - y));
+      // Circle radius is 108/320 (~0.3375 of box); with displacement, inner solid radius is ~0.25 of box
+      const endSize = Math.ceil(maxRadius / 0.24);
+
+      seedCounter = (seedCounter % 97) + 1;
+      html.style.setProperty('--vt-ink-mask', buildInkMaskDataUri(seedCounter));
+      html.style.setProperty('--vt-origin-x', `${x}px`);
+      html.style.setProperty('--vt-origin-y', `${y}px`);
+      html.classList.add('theme-transitioning');
+      isTransitioning = true;
+
+      let transition;
+      try {
+        transition = document.startViewTransition(() => {
+          applyTheme(next);
+        });
+      } catch (_) {
+        html.classList.remove('theme-transitioning');
+        isTransitioning = false;
+        applyTheme(next);
+        return;
+      }
+
+      transition.ready.then(() => {
+        spawnRippleRing(x, y, maxRadius);
+        const anim = document.documentElement.animate(
+          [
+            {
+              maskSize: '0px 0px',
+              maskPosition: `${x}px ${y}px`,
+              WebkitMaskSize: '0px 0px',
+              WebkitMaskPosition: `${x}px ${y}px`
+            },
+            {
+              maskSize: `${endSize}px ${endSize}px`,
+              maskPosition: `${x - endSize / 2}px ${y - endSize / 2}px`,
+              WebkitMaskSize: `${endSize}px ${endSize}px`,
+              WebkitMaskPosition: `${x - endSize / 2}px ${y - endSize / 2}px`
+            }
+          ],
+          {
+            duration: 780,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            pseudoElement: '::view-transition-new(root)',
+            fill: 'forwards'
+          }
+        );
+        return anim.finished.catch(() => {});
+      }).catch(() => {});
+
+      transition.finished.finally(() => {
+        html.classList.remove('theme-transitioning');
+        html.style.removeProperty('--vt-ink-mask');
+        html.style.removeProperty('--vt-origin-x');
+        html.style.removeProperty('--vt-origin-y');
+        isTransitioning = false;
+      });
     });
   }
 
